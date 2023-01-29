@@ -6,7 +6,7 @@ env:
   language: 'javascript'
   CURRENT_VERSION: $(node -p "require('./package.json').version")
 jobs:
-  install-dev-dependencies:
+  install-dependencies:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -17,7 +17,7 @@ jobs:
       - name: Restore or save cache for dev Dependencies
         uses: actions/cache@v2
         env:
-          cache-name: npm-node-modules-dev
+          cache-name: npm-node-modules
         with:
           path: node_modules
           key: npm-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}-dev
@@ -26,11 +26,11 @@ jobs:
           if [ -d "node_modules" ]; then
             echo 'Dependencies already exists!'
           else
-            npm ci
+            npm i
           fi
   build:
     runs-on: ubuntu-20.04
-    needs: install-dev-dependencies
+    needs: install-dependencies
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
@@ -52,31 +52,9 @@ jobs:
         with:
           name: build
           path: build
-  install-prod-dependencies:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-      - name: Restore or save cache for prod Dependencies
-        uses: actions/cache@v2
-        env:
-          cache-name: npm-node-modules-prod
-        with:
-          path: node_modules
-          key: npm-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}-prod
-      - name: Install Dependencies
-        run: |
-          if [ -d "node_modules" ]; then
-            echo 'Dependencies already exists!'
-          else
-            npm ci --only=prod
-          fi
   test:
     runs-on: ubuntu-20.04
-    needs: install-dev-dependencies
+    needs: install-dependencies
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
@@ -86,7 +64,7 @@ jobs:
       - name: Restore or save cache for dev Dependencies
         uses: actions/cache@v2
         env:
-          cache-name: npm-node-modules-dev
+          cache-name: npm-node-modules
         with:
           path: node_modules
           key: npm-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}-dev
