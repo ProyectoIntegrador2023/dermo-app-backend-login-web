@@ -40,7 +40,7 @@ jobs:
       - name: Restore or save cache for dev Dependencies
         uses: actions/cache@v2
         env:
-          cache-name: npm-node-modules-dev
+          cache-name: npm-node-modules
         with:
           path: node_modules
           key: npm-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}-dev
