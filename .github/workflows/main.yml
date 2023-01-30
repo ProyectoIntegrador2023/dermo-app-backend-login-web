@@ -72,7 +72,7 @@ jobs:
         run: npm run lint
       - name: Running Test
         run: |
-          npm run test:coverage && npm run test:coverage:report
+          npm run test:coverage
       - name: Persist Data
         uses: actions/upload-artifact@v2
         with:
