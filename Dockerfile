@@ -1,6 +1,6 @@
 FROM node:14
 WORKDIR /app
-ADD package.json /app/package.json
+COPY package.json /app/package.json
 RUN npm install
-ADD . /app
+COPY . /app
 CMD ["npm", "run", "start"]
