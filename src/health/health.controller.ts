@@ -3,6 +3,7 @@ import {
   HealthCheck,
   HealthCheckService,
   HttpHealthIndicator,
+  TypeOrmHealthIndicator,
 } from '@nestjs/terminus';
 
 @Controller('health')
@@ -11,14 +12,16 @@ export class HealthController {
 
   constructor(
     private health: HealthCheckService,
-    private http: HttpHealthIndicator
+    private http: HttpHealthIndicator,
+    private db: TypeOrmHealthIndicator,
   ) {}
 
   @Get()
   @HealthCheck()
   check() {
     const healthCheck = this.health.check([
-      () => this.http.pingCheck('Basic Check', 'http://localhost:3000'),
+      () => this.http.pingCheck('Basic Check', 'https://www.google.com'),
+      () => this.db.pingCheck('database'),
     ]);
     this.logger.log(`HealthCheck`);
     return healthCheck;
