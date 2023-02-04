@@ -64,6 +64,10 @@ export class AuthService {
   }
 
   public async refresh(login: Login): Promise<any> {
+    if (!login || !login.id) {
+      throw new HttpException('Forbidden', HttpStatus.UNAUTHORIZED);
+      return;
+    }
     this.repository.update(login.id, { lastLoginAt: new Date() });
     return {
       token: this.helper.generateToken(login),
