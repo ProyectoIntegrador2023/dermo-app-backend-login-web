@@ -1,27 +1,72 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { LoginDto, RegisterDto } from './auth.dto';
+import { AuthHelper } from './auth.helper';
+import { Login } from './login.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-  ) {}
+  private readonly logger = new Logger(AuthService.name);
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(username);
-    if (user && user.password === pass) {
-      const { result } = user;
-      return result;
+  @InjectRepository(Login)
+  private readonly repository: Repository<Login>;
+
+  @Inject(AuthHelper)
+  private readonly helper: AuthHelper;
+
+  public async register(body: RegisterDto): Promise<Login | never> {
+    const { email, password }: RegisterDto = body;
+    let login: Login = await this.repository.findOne({ where: { email } });
+    if (login) {
+      throw new HttpException('Conflict', HttpStatus.CONFLICT);
     }
-    return null;
+
+    login = new Login();
+    login.email = email;
+    login.password = this.helper.encodePassword(password);
+
+    this.logger.log('register - login', login);
+
+    return this.repository.save(login);
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+  public async login(body: LoginDto): Promise<any | never> {
+    const { email, password }: LoginDto = body;
+    const login: Login = await this.repository.findOne({ where: { email } });
+
+    if (!login) {
+      throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+    }
+
+    const isPasswordValid: boolean = this.helper.isPasswordValid(
+      password,
+      login.password
+    );
+
+    if (!isPasswordValid) {
+      throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+    }
+
+    this.repository.update(login.id, { lastLoginAt: new Date() });
+    const token = this.helper.generateToken(login);
+
     return {
-      access_token: this.jwtService.sign(payload),
+      ...body,
+      token,
+    };
+  }
+
+  public async refresh(login: Login): Promise<any> {
+    this.repository.update(login.id, { lastLoginAt: new Date() });
+    return {
+      token: this.helper.generateToken(login),
     };
   }
 }
