@@ -10,16 +10,18 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   public createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'postgres',
-      host: this.config.get<string>('DB_HOST'),
-      port: this.config.get<number>('DB_PORT'),
-      database: this.config.get<string>('DB_NAME'),
-      username: this.config.get<string>('DB_USER'),
-      password: this.config.get<string>('DB_PASSWORD'),
+      host: process.env.DB_HOST || this.config.get<string>('DB_HOST'),
+      port:
+        parseInt(process.env.DB_PORT, 10) || this.config.get<number>('DB_PORT'),
+      database: process.env.DB_NAME || this.config.get<string>('DB_NAME'),
+      username: process.env.DB_USER || this.config.get<string>('DB_USER'),
+      password:
+        process.env.DB_PASSWORD || this.config.get<string>('DB_PASSWORD'),
       entities: ['dist/**/*.entity.{ts,js}'],
       migrations: ['dist/migrations/*.{ts,js}'],
       migrationsTableName: 'typeorm_migrations',
       logger: 'file',
-      schema: this.config.get<string>('DB_SCHEMA'),
+      schema: process.env.DB_SCHEMA || this.config.get<string>('DB_SCHEMA'),
       synchronize: true, // never use TRUE in production!
     };
   }
