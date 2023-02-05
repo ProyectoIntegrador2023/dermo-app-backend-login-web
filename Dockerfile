@@ -1,6 +1,22 @@
-FROM node:14
-WORKDIR /app
-COPY package.json /app/package.json
-RUN npm install
-COPY . /app
-CMD ["npm", "run", "start"]
+# Building layer
+FROM --platform=linux/amd64 node:14-alpine as development
+
+WORKDIR /usr/src/app
+
+# Copy configuration files
+COPY package*.json ./
+
+# Install dependencies from package-lock.json, see https://docs.npmjs.com/cli/v7/commands/npm-ci
+RUN npm ci
+
+# Copy application sources (.ts, .tsx, js)
+COPY . .
+
+# Build application (produces dist/ folder)
+RUN npm run build
+
+# Expose application port
+EXPOSE 3000
+
+# Start application
+CMD [ "node", "dist/main.js" ]
