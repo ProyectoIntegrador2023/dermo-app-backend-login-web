@@ -20,3 +20,6 @@ EXPOSE 3000
 
 # Start application
 CMD [ "node", "dist/main.js" ]
+
+# docker build -t "dermo-app-backend-auth-web:0.0.1" .
+# docker run --rm -p 3000:3000 dermo-app-backend-auth-web:0.0.1
