@@ -4,7 +4,9 @@ on:
     branches: [ feature/*, develop, master ]
 env:
   language: 'javascript'
-  CURRENT_VERSION: $(node -p "require('./package.json').version")
+  SERVICE_NAME: dermo-app-backend-auth-web
+  ECR_REGISTRY: 966388213582.dkr.ecr.us-east-1.amazonaws.com
+
 jobs:
   install-dependencies:
     runs-on: ubuntu-20.04
@@ -97,16 +99,21 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Get app version
+        id: get_version
+        uses: battila7/get-version-action@v2
+        env:
+          APP_VERSION: ${{ steps.get_version.outputs.version }}
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY: 966388213582.dkr.ecr.us-east-1.amazonaws.com
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ steps.vars.outputs.tag }}
         run: |
-          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
-          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          echo "::set-output name=image::${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
+          docker build -t ${{ env.SERVICE_NAME }} .
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.APP_VERSION }}
+          echo "::set-output name=image::${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.APP_VERSION }}
 
       - name: Download task definition
         run: |
