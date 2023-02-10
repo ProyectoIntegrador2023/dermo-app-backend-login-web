@@ -133,7 +133,7 @@ jobs:
           docker tag ${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }} ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
 
       - name: push image to Amazon ECR
-        id: build-image
+        id: push-image
         run: |
           docker push ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
           echo "::set-output name=image::${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
