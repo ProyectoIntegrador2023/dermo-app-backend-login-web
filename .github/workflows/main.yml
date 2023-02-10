@@ -86,7 +86,7 @@ jobs:
     name: "Deployment"
     runs-on: "ubuntu-20.04"
     needs:
-      - test
+      - build
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
