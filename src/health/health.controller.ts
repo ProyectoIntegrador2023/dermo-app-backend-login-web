@@ -23,7 +23,6 @@ export class HealthController {
       () => this.http.pingCheck('Basic Check', 'https://www.google.com'),
       () => this.db.pingCheck('database'),
     ]);
-    this.logger.log(`HealthCheck`);
     return healthCheck;
   }
 }
