@@ -11,13 +11,13 @@ jobs:
   install-dependencies:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: 14.x
+          node-version: 16
       - name: Restore or save cache for dev Dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: npm-node-modules
         with:
@@ -34,13 +34,13 @@ jobs:
     runs-on: ubuntu-20.04
     needs: install-dependencies
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 14.x
       - name: Restore or save cache for dev Dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: npm-node-modules
         with:
@@ -50,21 +50,21 @@ jobs:
         run: |
           npm run build
       - name: Persist Data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: build
-          path: build
+          name: dist
+          path: dist
   test:
     runs-on: ubuntu-20.04
     needs: install-dependencies
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 14.x
       - name: Restore or save cache for dev Dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: npm-node-modules
         with:
@@ -76,7 +76,7 @@ jobs:
         run: |
           npm run test:coverage
       - name: Persist Data
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: coverage
           path: coverage
@@ -104,6 +104,8 @@ jobs:
         uses: battila7/get-version-action@v2
         env:
           APP_VERSION: ${{ steps.get_version.outputs.version }}
+
+      - run: ls -la
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
