@@ -111,7 +111,7 @@ jobs:
 
       - name: Download task definition
         run: |
-            aws ecs describe-task-definition --task-definition fargate-node-task-defn --query taskDefinition > task-definition.json
+            aws ecs describe-task-definition --task-definition task-dermo-app-web --query taskDefinition > task-definition.json
 
       - name: Get app version
         id: get_version
