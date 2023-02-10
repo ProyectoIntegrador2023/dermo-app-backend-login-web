@@ -113,22 +113,22 @@ jobs:
         run: |
             aws ecs describe-task-definition --task-definition task-dermo-app-web --query taskDefinition > task-definition.json
 
-      - name: Get app version
-        id: get_version
-        uses: battila7/get-version-action@v2
+      - name: Get package info
+        id: package
+        uses: codex-team/action-nodejs-package-info@v1.1
         env:
-          APP_VERSION: ${{ steps.get_version.outputs.version }}
+          APP_VERSION: ${{ steps.package.outputs.version }}
 
       - run: echo ${{ env.APP_VERSION }}
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          ECR_REGISTRY: 966388213582.dkr.ecr.us-east-1.amazonaws.com
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: latest
         run: |
-          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }} .
+          docker build -t ${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }} .
+          docker tag ${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }} ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
           docker push ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
           echo "::set-output name=image::${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
 
