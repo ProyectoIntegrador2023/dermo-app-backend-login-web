@@ -3,7 +3,6 @@ on:
   push:
     branches: [ feature/*, develop, master ]
 env:
-  language: 'javascript'
   SERVICE_NAME: dermo-app-backend-auth-web
   ECR_REGISTRY: 966388213582.dkr.ecr.us-east-1.amazonaws.com
   ECS_SERVICE: service-dermo-app-backend-auth-web
@@ -115,15 +114,7 @@ jobs:
         run: |
             aws ecs describe-task-definition --task-definition task-dermo-app-web --query taskDefinition > task-definition.json
 
-      - name: Get package info
-        id: package
-        uses: codex-team/action-nodejs-package-info@v1.1
-        env:
-          APP_VERSION: ${{ steps.package.outputs.version }}
-
-      - run: echo ${{ env.APP_VERSION }}
-
-      - name: Build, tag, image
+      - name: Build, tag, push image to Amazon ECR
         id: build-image
         env:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
@@ -131,12 +122,7 @@ jobs:
         run: |
           docker build -t ${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }} .
           docker tag ${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }} ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
-
-      - name: push image to Amazon ECR
-        id: push-image
-        run: |
           docker push ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
-          echo "::set-output name=image::${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
