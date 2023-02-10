@@ -46,7 +46,7 @@
             ]
         }
     ],
-    "family": "task-dermo-app-web",
+    "family": "dermo-app-backend-auth-web-task",
     "executionRoleArn": "arn:aws:iam::966388213582:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
     "volumes": [],
