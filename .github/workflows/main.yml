@@ -52,8 +52,9 @@ jobs:
       - name: Persist Data
         uses: actions/upload-artifact@v3
         with:
-          name: dist
-          path: dist
+          path: |
+            dist: dist
+
   test:
     runs-on: ubuntu-20.04
     needs: install-dependencies
@@ -85,9 +86,18 @@ jobs:
     if: github.ref == 'refs/heads/develop'
     name: "Deployment"
     runs-on: "ubuntu-20.04"
+    permissions:
+      id-token: write
+      contents: read
     needs:
       - build
     steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.x
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -98,6 +108,10 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Download task definition
+        run: |
+            aws ecs describe-task-definition --task-definition fargate-node-task-defn --query taskDefinition > task-definition.json
 
       - name: Get app version
         id: get_version
@@ -112,10 +126,11 @@ jobs:
         env:
           ECR_REGISTRY: 966388213582.dkr.ecr.us-east-1.amazonaws.com
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG: latest
         run: |
-          docker build -t ${{ env.SERVICE_NAME }} .
-          docker push ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.APP_VERSION }}
-          echo "::set-output name=image::${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.APP_VERSION }}
+          docker build -t ${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }} .
+          docker push ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
+          echo "::set-output name=image::${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
 
       - name: Download task definition
         run: |
