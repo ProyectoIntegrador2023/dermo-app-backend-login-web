@@ -6,6 +6,7 @@ env:
   SERVICE_NAME: dermo-app-backend-auth-web
   ECR_REGISTRY: 966388213582.dkr.ecr.us-east-1.amazonaws.com
   ECS_SERVICE: service-dermo-app-backend-auth-web
+  CONTAINER_NAME: container-dermo-app-backend-auth-web
   ECS_CLUSTER: DermoAppWebCluster
 
 jobs:
@@ -129,9 +130,13 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: pipeline/task-definition.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ env.ECR_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ env.IMAGE_TAG }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: pipeline/task-definition.json
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
