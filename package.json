@@ -1,13 +1,13 @@
 {
   "name": "dermo-app-backend-auth-web",
-  "version": "0.0.5",
+  "version": "1.0.1",
   "description": "",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
     "build": "npm run clean && nest build",
-    "build:docker:image": "docker build -t \"dermo-app-backend-auth-web:$npm_package_version\" . ",
+    "build:docker:image": "docker build -t \"$npm_package_name:$npm_package_version\" . ",
     "clean": "rimraf dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:local": "NODE_ENV=local nest start --debug --watch",
@@ -36,7 +36,6 @@
     "class-sanitizer": "^1.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
-    "node-fs": "^0.1.7",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",

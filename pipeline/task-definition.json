@@ -37,7 +37,7 @@
                 },
                 {
                     "name": "DB_SCHEMA",
-                    "value": "dermoapp_medic_auth"
+                    "value": "dermoapp_medic"
                 },
                 {
                     "name": "DB_PASSWORD",
