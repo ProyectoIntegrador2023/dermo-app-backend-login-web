@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity('medico')
 export class Medic extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;

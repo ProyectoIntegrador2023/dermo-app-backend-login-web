@@ -1,5 +1,11 @@
 import { Exclude } from 'class-transformer';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Login extends BaseEntity {
@@ -12,6 +18,12 @@ export class Login extends BaseEntity {
   @Exclude()
   @Column({ name: 'clave', type: 'varchar' })
   public password!: string;
+
+  @CreateDateColumn({
+    name: 'fecha_creacion',
+    type: 'timestamp',
+  })
+  public createdAt: Date;
 
   @Column({
     name: 'fecha_ultimo_login',

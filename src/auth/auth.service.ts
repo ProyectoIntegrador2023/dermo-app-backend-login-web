@@ -58,7 +58,7 @@ export class AuthService {
     const token = this.helper.generateToken(login);
 
     return {
-      ...body,
+      email: login.email,
       token,
     };
   }
