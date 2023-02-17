@@ -5,9 +5,9 @@ on:
 env:
   SERVICE_NAME: dermo-app-backend-auth-web
   ECR_REGISTRY: 966388213582.dkr.ecr.us-east-1.amazonaws.com
-  ECS_SERVICE: service-dermo-app-backend-auth-web
   CONTAINER_NAME: container-dermo-app-backend-auth-web
   ECS_CLUSTER: DermoAppWebCluster
+  ECS_SERVICE: s-dermo-app-web-service-3000
   AWS_REGION: us-east-1
 
 jobs:

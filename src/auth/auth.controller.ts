@@ -2,10 +2,12 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   Inject,
   Logger,
   Post,
   Req,
+  Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -15,7 +17,7 @@ import { JwtAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { Login } from './login.entity';
 
-@Controller('')
+@Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
@@ -37,5 +39,10 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   private refresh(@Req() { user }: Request): Promise<any | never> {
     return this.service.refresh(<Login>user);
+  }
+
+  @Get('health')
+  redirect(@Res() res) {
+    return res.redirect('/health');
   }
 }
