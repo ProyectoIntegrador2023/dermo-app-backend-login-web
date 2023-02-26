@@ -1,6 +1,5 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Get,
   Inject,
@@ -9,14 +8,13 @@ import {
   Req,
   Res,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './auth.guard';
 import { AuthHelper } from './services/auth.helper';
 import { AuthService } from './services/auth.service';
-import { Login } from './login.entity';
+import { LoginEntity } from './entities/login.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -34,8 +32,7 @@ export class AuthController {
   }
 
   @Post('register')
-  @UseInterceptors(ClassSerializerInterceptor)
-  private register(@Body() body: RegisterDto): Promise<Login | never> {
+  private register(@Body() body: RegisterDto): Promise<LoginEntity | never> {
     return this.service.register(body);
   }
 
@@ -48,7 +45,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   private refresh(@Req() { user }: Request): Promise<any | never> {
     this.logger.log('refresh user ', user);
-    return this.service.refresh(<Login>user);
+    return this.service.refresh(<LoginEntity>user);
   }
 
   @Post('token/validate')

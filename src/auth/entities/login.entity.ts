@@ -7,12 +7,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity()
-export class Login extends BaseEntity {
+@Entity('login')
+export class LoginEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column({ name: 'correo', type: 'varchar' })
+  @Column({ name: 'correo', type: 'varchar', unique: true })
   public email!: string;
 
   @Exclude()

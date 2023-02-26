@@ -9,37 +9,37 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoginDto, RegisterDto } from '../dto/auth.dto';
 import { AuthHelper } from './auth.helper';
-import { Login } from '../login.entity';
+import { LoginEntity } from '../entities/login.entity';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  @InjectRepository(Login)
-  private readonly repository: Repository<Login>;
+  @InjectRepository(LoginEntity)
+  private readonly repository: Repository<LoginEntity>;
 
   @Inject(AuthHelper)
   private readonly helper: AuthHelper;
 
-  public async register(body: RegisterDto): Promise<Login | never> {
+  public async register(body: RegisterDto): Promise<LoginEntity | never> {
     const { email, password }: RegisterDto = body;
-    let login: Login = await this.repository.findOne({ where: { email } });
+    let login: LoginEntity = await this.findLogin(email);
     if (login) {
       throw new HttpException('Conflict', HttpStatus.CONFLICT);
     }
 
-    login = new Login();
+    login = new LoginEntity();
     login.email = email;
     login.password = this.helper.encodePassword(password);
 
-    this.logger.log('register - login', login);
+    this.logger.log('register - login', JSON.stringify(login));
 
     return this.repository.save(login);
   }
 
   public async login(body: LoginDto): Promise<any | never> {
     const { email, password }: LoginDto = body;
-    const login: Login = await this.repository.findOne({ where: { email } });
+    const login: LoginEntity = await this.findLogin(email);
 
     if (!login) {
       throw new HttpException('No user found', HttpStatus.NOT_FOUND);
@@ -63,7 +63,7 @@ export class AuthService {
     };
   }
 
-  public async refresh(login: Login): Promise<any> {
+  public async refresh(login: LoginEntity): Promise<any> {
     if (!login || !login.id) {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
@@ -71,5 +71,9 @@ export class AuthService {
     return {
       token: this.helper.generateToken(login),
     };
+  }
+
+  public async findLogin(email: string) {
+    return await this.repository.findOne({ where: { email } });
   }
 }

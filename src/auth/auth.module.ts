@@ -2,13 +2,10 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport/dist';
 import { AuthService } from './services/auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { MedicModule } from '../medic/medic.module';
-import { MedicService } from '../medic/medic.service';
 import { AuthController } from './auth.controller';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Login } from './login.entity';
-import { Medic } from '../medic/medic.entity';
+import { LoginEntity } from './entities/login.entity';
 import { JwtStrategy } from './services/auth.strategy';
 import { AuthHelper } from './services/auth.helper';
 
@@ -24,10 +21,9 @@ import { AuthHelper } from './services/auth.helper';
         },
       }),
     }),
-    TypeOrmModule.forFeature([Login, Medic]),
-    MedicModule,
+    TypeOrmModule.forFeature([LoginEntity]),
   ],
-  providers: [AuthService, MedicService, AuthHelper, JwtStrategy],
+  providers: [AuthService, AuthHelper, JwtStrategy],
   exports: [AuthService],
   controllers: [AuthController],
 })

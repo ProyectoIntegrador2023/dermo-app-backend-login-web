@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
 import { AuthHelper } from './services/auth.helper';
 import { AuthService } from './services/auth.service';
-import { Login } from './login.entity';
+import { LoginEntity } from './entities/login.entity';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -17,7 +17,7 @@ describe('AuthController', () => {
         AuthHelper,
         JwtService,
         {
-          provide: getRepositoryToken(Login),
+          provide: getRepositoryToken(LoginEntity),
           useValue: {},
         },
       ],

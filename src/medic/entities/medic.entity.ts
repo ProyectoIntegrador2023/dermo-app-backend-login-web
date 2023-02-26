@@ -1,15 +1,18 @@
-import { Login } from '../auth/login.entity';
+import { LoginEntity } from '../../auth/entities/login.entity';
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity('medico')
-export class Medic extends BaseEntity {
+export class MedicEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -25,7 +28,20 @@ export class Medic extends BaseEntity {
   @Column({ name: 'ciudad_id', type: 'varchar', length: 5 })
   public cityId: string | null;
 
-  @OneToOne(() => Login)
+  @CreateDateColumn({
+    name: 'fecha_creacion',
+    type: 'timestamp',
+  })
+  public createdAt: Date;
+
+  @UpdateDateColumn({
+    name: 'fecha_actualizacion',
+    type: 'timestamp',
+  })
+  public updatedAt: Date;
+
+  @Exclude()
+  @OneToOne(() => LoginEntity)
   @JoinColumn({ name: 'login_id' })
-  loginId: Login;
+  public login: LoginEntity;
 }
