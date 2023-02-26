@@ -1,27 +1,32 @@
+import { Exclude } from 'class-transformer';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { MedicEntity } from './medic.entity';
 
-@Entity()
-export class Profile extends BaseEntity {
+@Entity('perfil')
+export class ProfileEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column({ name: 'nombres', type: 'varchar' })
-  public name!: string;
+  @Column({ name: 'especialidad', type: 'varchar' })
+  public specialty!: string;
 
-  @Column({ name: 'edad', type: 'varchar' })
-  public age!: number;
+  @Column({ name: 'licencia', type: 'varchar' })
+  public licenceId!: string;
 
-  @Column({ name: 'pais_cod', type: 'varchar' })
-  public countryCode!: string;
+  @Column({ name: 'fecha_vigencia_licencia', type: 'varchar' })
+  public licenceValidityDate!: Date;
 
-  @Column({ name: 'ciudad_cod', type: 'varchar' })
-  public cityCode!: string;
+  @Column({ name: 'licenciaImg', type: 'bytea' })
+  public licenceImage!: Buffer;
 
   @CreateDateColumn({
     name: 'fecha_creacion',
@@ -29,11 +34,14 @@ export class Profile extends BaseEntity {
   })
   public createdAt: Date;
 
-  @Column({
+  @UpdateDateColumn({
     name: 'fecha_actualizacion',
     type: 'timestamp',
-    nullable: true,
-    default: null,
   })
-  public lastLoginAt: Date | null;
+  public updatedAt: Date;
+
+  @Exclude()
+  @OneToOne(() => MedicEntity)
+  @JoinColumn({ name: 'medic_id' })
+  public medic: MedicEntity;
 }

@@ -46,8 +46,8 @@ export class MedicService {
     const medicProfile = new MedicEntity();
     medicProfile.name = body.name;
     medicProfile.age = body.age;
-    medicProfile.countryId = body.countryId;
-    medicProfile.cityId = body.cityId;
+    medicProfile.country = body.country;
+    medicProfile.city = body.city;
     medicProfile.login = loginTmp;
 
     return this.medicRepository.save(medicProfile);
@@ -80,8 +80,8 @@ export class MedicService {
 
     medicTmp.name = body.name;
     medicTmp.age = body.age;
-    medicTmp.countryId = body.countryId;
-    medicTmp.cityId = body.cityId;
+    medicTmp.country = body.country;
+    medicTmp.city = body.city;
 
     return this.medicRepository.save(medicTmp);
   }

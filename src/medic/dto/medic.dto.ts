@@ -21,13 +21,13 @@ export class MedicDto {
 
   @IsString()
   @MinLength(2)
-  @MaxLength(5)
-  public readonly countryId?: string;
+  @MaxLength(20)
+  public readonly country?: string;
 
   @IsString()
   @MinLength(2)
-  @MaxLength(5)
-  public readonly cityId?: string;
+  @MaxLength(20)
+  public readonly city?: string;
 
   @IsEmail()
   public readonly email?: string;

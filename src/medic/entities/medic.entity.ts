@@ -22,11 +22,11 @@ export class MedicEntity extends BaseEntity {
   @Column({ name: 'edad', type: 'int', width: 2 })
   public age: number;
 
-  @Column({ name: 'pais_id', type: 'varchar', length: 5 })
-  public countryId: string | null;
+  @Column({ name: 'pais', type: 'varchar', length: 20 })
+  public country: string | null;
 
-  @Column({ name: 'ciudad_id', type: 'varchar', length: 5 })
-  public cityId: string | null;
+  @Column({ name: 'ciudad', type: 'varchar', length: 20 })
+  public city: string | null;
 
   @CreateDateColumn({
     name: 'fecha_creacion',
