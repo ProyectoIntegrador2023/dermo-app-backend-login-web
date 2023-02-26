@@ -1,15 +1,9 @@
-import {
-  Injectable,
-  HttpException,
-  HttpStatus,
-  UnauthorizedException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { Login } from './login.entity';
+import { Login } from '../login.entity';
 
 @Injectable()
 export class AuthHelper {
@@ -18,15 +12,11 @@ export class AuthHelper {
   @InjectRepository(Login)
   private readonly repository: Repository<Login>;
 
-  private readonly jwt: JwtService;
-
-  constructor(jwt: JwtService) {
-    this.jwt = jwt;
-  }
+  constructor(private jwtService: JwtService) {}
 
   // Decoding the JWT Token
   public async decode(token: string): Promise<unknown> {
-    return this.jwt.decode(token, null);
+    return this.jwtService.decode(token, null);
   }
 
   // Get User by User ID we get from decode()
@@ -36,7 +26,7 @@ export class AuthHelper {
 
   // Generate JWT Token
   public generateToken(login: Login): string {
-    return this.jwt.sign({ id: login.id, email: login.email });
+    return this.jwtService.sign({ id: login.id, email: login.email });
   }
 
   // Validate User's password
@@ -49,22 +39,5 @@ export class AuthHelper {
     const salt: string = bcrypt.genSaltSync(10);
 
     return bcrypt.hashSync(password, salt);
-  }
-
-  // Validate JWT Token, throw forbidden error if JWT Token is invalid
-  private async validate(token: string): Promise<boolean | never> {
-    const decoded: unknown = this.jwt.verify(token);
-
-    if (!decoded) {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-    }
-
-    const login: Login = await this.validateUser(decoded);
-
-    if (!login) {
-      throw new UnauthorizedException();
-    }
-
-    return true;
   }
 }

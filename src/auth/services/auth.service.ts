@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { LoginDto, RegisterDto } from './auth.dto';
+import { LoginDto, RegisterDto } from '../dto/auth.dto';
 import { AuthHelper } from './auth.helper';
-import { Login } from './login.entity';
+import { Login } from '../login.entity';
 
 @Injectable()
 export class AuthService {
@@ -65,8 +65,7 @@ export class AuthService {
 
   public async refresh(login: Login): Promise<any> {
     if (!login || !login.id) {
-      throw new HttpException('Forbidden', HttpStatus.UNAUTHORIZED);
-      return;
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
     this.repository.update(login.id, { lastLoginAt: new Date() });
     return {

@@ -12,9 +12,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { LoginDto, RegisterDto } from './auth.dto';
+import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './auth.guard';
-import { AuthService } from './auth.service';
+import { AuthHelper } from './services/auth.helper';
+import { AuthService } from './services/auth.service';
 import { Login } from './login.entity';
 
 @Controller('auth')
@@ -23,6 +24,14 @@ export class AuthController {
 
   @Inject(AuthService)
   private readonly service: AuthService;
+
+  @Inject(AuthHelper)
+  private readonly authHelper: AuthHelper;
+
+  @Get('health')
+  redirect(@Res() res) {
+    return res.redirect('/health');
+  }
 
   @Post('register')
   @UseInterceptors(ClassSerializerInterceptor)
@@ -35,14 +44,16 @@ export class AuthController {
     return this.service.login(body);
   }
 
-  @Post('refresh')
+  @Post('token/refresh')
   @UseGuards(JwtAuthGuard)
   private refresh(@Req() { user }: Request): Promise<any | never> {
+    this.logger.log('refresh user ', user);
     return this.service.refresh(<Login>user);
   }
 
-  @Get('health')
-  redirect(@Res() res) {
-    return res.redirect('/health');
+  @Post('token/validate')
+  @UseGuards(JwtAuthGuard)
+  validToken(@Req() req) {
+    return req.user;
   }
 }

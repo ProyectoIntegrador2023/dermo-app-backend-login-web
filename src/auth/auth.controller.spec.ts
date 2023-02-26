@@ -2,8 +2,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
-import { AuthHelper } from './auth.helper';
-import { AuthService } from './auth.service';
+import { AuthHelper } from './services/auth.helper';
+import { AuthService } from './services/auth.service';
 import { Login } from './login.entity';
 
 describe('AuthController', () => {

@@ -14,6 +14,27 @@
 					"item": [
 						{
 							"name": "Login",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.environment.set(\"bearer_token\", jsonData.token);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [
@@ -27,9 +48,9 @@
 									"raw": "{\"email\": \"elon@gmail.com\", \"password\": \"12345678\"}"
 								},
 								"url": {
-									"raw": "{{url_aws}}/auth/login",
+									"raw": "{{url_local}}/auth/login",
 									"host": [
-										"{{url_aws}}"
+										"{{url_local}}"
 									],
 									"path": [
 										"auth",
@@ -321,7 +342,7 @@
 							]
 						},
 						{
-							"name": "Refresh",
+							"name": "Token Refresh",
 							"request": {
 								"method": "POST",
 								"header": [
@@ -331,16 +352,17 @@
 									},
 									{
 										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJlbG9uQGdtYWlsLmNvbSIsImlhdCI6MTY3NTQ4NTAxOSwiZXhwIjoxNzA3MDIxMDE5fQ.JAVysTFg1Y0-plN7rBkAo-fz6RWWj_Tdto8CJe7HreQ"
+										"value": "Bearer {{bearer_token}}"
 									}
 								],
 								"url": {
-									"raw": "{{url_aws}}/auth/refresh",
+									"raw": "{{url_local}}/auth/token/refresh",
 									"host": [
-										"{{url_aws}}"
+										"{{url_local}}"
 									],
 									"path": [
 										"auth",
+										"token",
 										"refresh"
 									]
 								}
@@ -410,77 +432,646 @@
 									"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJlbG9uQGdtYWlsLmNvbSIsImlhdCI6MTY3NTQ5NTEyNywiZXhwIjoxNzA3MDMxMTI3fQ.XlxGW9oie6GxOAYSeaN0J34kaiuSNpE86IdTKo8RoQo\"\n}"
 								}
 							]
-						}
-					]
-				},
-				{
-					"name": "Health Check",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url_aws}}/health",
-							"host": [
-								"{{url_aws}}"
-							],
-							"path": [
-								"health"
-							]
-						}
-					},
-					"response": [
+						},
 						{
-							"name": "200",
-							"originalRequest": {
+							"name": "Token Validate",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{bearer_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{url_local}}/auth/token/validate",
+									"host": [
+										"{{url_local}}"
+									],
+									"path": [
+										"auth",
+										"token",
+										"validate"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "201",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJlbG9uQGdtYWlsLmNvbSIsImlhdCI6MTY3NTQ4NTAxOSwiZXhwIjoxNzA3MDIxMDE5fQ.JAVysTFg1Y0-plN7rBkAo-fz6RWWj_Tdto8CJe7HreQ"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/auth/refresh",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"auth",
+												"refresh"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "183"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"b7-H27f3oPubea/mwcZRmo2hXQRlOo\""
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 04 Feb 2023 07:18:47 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJlbG9uQGdtYWlsLmNvbSIsImlhdCI6MTY3NTQ5NTEyNywiZXhwIjoxNzA3MDMxMTI3fQ.XlxGW9oie6GxOAYSeaN0J34kaiuSNpE86IdTKo8RoQo\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Health Check auth",
+							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:3000/health",
-									"protocol": "http",
+									"raw": "{{url_local}}/auth/health",
 									"host": [
-										"localhost"
+										"{{url_local}}"
 									],
-									"port": "3000",
 									"path": [
+										"auth",
 										"health"
 									]
 								}
 							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
+							"response": [
 								{
-									"key": "X-Powered-By",
-									"value": "Express"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json; charset=utf-8"
-								},
-								{
-									"key": "Content-Length",
-									"value": "161"
-								},
-								{
-									"key": "ETag",
-									"value": "W/\"a1-YEUddLfT+EpHYZdSx16I9OCgFbs\""
-								},
-								{
-									"key": "Date",
-									"value": "Sat, 04 Feb 2023 07:30:19 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								},
-								{
-									"key": "Keep-Alive",
-									"value": "timeout=5"
+									"name": "200",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:3000/health",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"health"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "161"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"a1-YEUddLfT+EpHYZdSx16I9OCgFbs\""
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 04 Feb 2023 07:30:19 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"ok\",\n    \"info\": {\n        \"Basic Check\": {\n            \"status\": \"up\"\n        },\n        \"database\": {\n            \"status\": \"up\"\n        }\n    },\n    \"error\": {},\n    \"details\": {\n        \"Basic Check\": {\n            \"status\": \"up\"\n        },\n        \"database\": {\n            \"status\": \"up\"\n        }\n    }\n}"
 								}
-							],
-							"cookie": [],
-							"body": "{\n    \"status\": \"ok\",\n    \"info\": {\n        \"Basic Check\": {\n            \"status\": \"up\"\n        },\n        \"database\": {\n            \"status\": \"up\"\n        }\n    },\n    \"error\": {},\n    \"details\": {\n        \"Basic Check\": {\n            \"status\": \"up\"\n        },\n        \"database\": {\n            \"status\": \"up\"\n        }\n    }\n}"
+							]
+						}
+					]
+				},
+				{
+					"name": "diagnostics",
+					"item": [
+						{
+							"name": "Health Check diagnostics",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url_aws}}/diagnostic/health",
+									"host": [
+										"{{url_aws}}"
+									],
+									"path": [
+										"diagnostic",
+										"health"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:3000/health",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"health"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "161"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"a1-YEUddLfT+EpHYZdSx16I9OCgFbs\""
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 04 Feb 2023 07:30:19 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"ok\",\n    \"info\": {\n        \"Basic Check\": {\n            \"status\": \"up\"\n        },\n        \"database\": {\n            \"status\": \"up\"\n        }\n    },\n    \"error\": {},\n    \"details\": {\n        \"Basic Check\": {\n            \"status\": \"up\"\n        },\n        \"database\": {\n            \"status\": \"up\"\n        }\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"injuryId\": \"a9abc8b9-84d7-4456-97be-c7be983a1745\",\n    \"condition\": \"Psariasis 5\",\n    \"level\": \"Medio\",\n    \"requeresTreatment\": true,\n    \"treatmentTerm\": \"6 meses\",\n    \"medicines\": \" Ciclosparina 100mg cada 8 horas\",\n    \"treatmentControl\": \"Mensual\",\n    \"recommendations\": \"Evitar uso de productos derivados del petróleo, uso de bloqueador solar y baja exposición, hidratación frecuente.\",\n    \"medicId\": \"1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url_aws}}/diagnostic/register",
+									"host": [
+										"{{url_aws}}"
+									],
+									"path": [
+										"diagnostic",
+										"register"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "409",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"injuryId\": \"a9abc8b9-84d7-4456-97be-c7be983a1747\",\n    \"condition\": \"Psariasis 2\",\n    \"level\": \"Medio\",\n    \"requeresTreatment\": true,\n    \"treatmentTerm\": \"6 meses\",\n    \"medicines\": \" Ciclosparina 100mg cada 8 horas\",\n    \"treatmentControl\": \"Mensual\",\n    \"recommendations\": \"Evitar uso de productos derivados del petróleo, uso de bloqueador solar y baja exposición, hidratación frecuente.\",\n    \"medicId\": \"1\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{url_local2}}/diagnostic/register",
+											"host": [
+												"{{url_local2}}"
+											],
+											"path": [
+												"diagnostic",
+												"register"
+											]
+										}
+									},
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "64"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"40-lVvMj3f6Lyn6d13zT/bG9KGFhfQ\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 15 Feb 2023 05:25:31 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"statusCode\": 409,\n    \"message\": \"Conflict Diagnostic Already Exist\"\n}"
+								},
+								{
+									"name": "201",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"injuryId\": \"a9abc8b9-84d7-4456-97be-c7be983a1748\",\n    \"condition\": \"Psariasis 2\",\n    \"level\": \"Medio\",\n    \"requeresTreatment\": true,\n    \"treatmentTerm\": \"6 meses\",\n    \"medicines\": \" Ciclosparina 100mg cada 8 horas\",\n    \"treatmentControl\": \"Mensual\",\n    \"recommendations\": \"Evitar uso de productos derivados del petróleo, uso de bloqueador solar y baja exposición, hidratación frecuente.\",\n    \"medicId\": \"1\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{url_local2}}/diagnostic/register",
+											"host": [
+												"{{url_local2}}"
+											],
+											"path": [
+												"diagnostic",
+												"register"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "456"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"1c8-r/nlPadUC0ZHDqi/m1yFBEaWDRY\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 15 Feb 2023 05:48:30 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"injuryId\": \"a9abc8b9-84d7-4456-97be-c7be983a1748\",\n    \"condition\": \"Psariasis 2\",\n    \"level\": \"Medio\",\n    \"requeresTreatment\": true,\n    \"treatmentTerm\": \"6 meses\",\n    \"medicines\": \" Ciclosparina 100mg cada 8 horas\",\n    \"treatmentControl\": \"Mensual\",\n    \"recommendations\": \"Evitar uso de productos derivados del petróleo, uso de bloqueador solar y baja exposición, hidratación frecuente.\",\n    \"medicId\": \"1\",\n    \"id\": 7,\n    \"createdAt\": \"2023-02-15T10:48:30.910Z\",\n    \"updatedAt\": \"2023-02-15T10:48:30.910Z\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Diagnostic",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJlbG9uQGdtYWlsLmNvbSIsImlhdCI6MTY3NjY5ODUyNSwiZXhwIjoxNjc2Njk4NTI1fQ.eyy5roc-yT8jLIFAluatkaZOccwWEGKtzwFO2S5nqKg",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url_aws}}/diagnostic/injury/a9abc8b9-84d7-4456-97be-c7be983a1745",
+									"host": [
+										"{{url_aws}}"
+									],
+									"path": [
+										"diagnostic",
+										"injury",
+										"a9abc8b9-84d7-4456-97be-c7be983a1745"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{url_aws}}/diagnostic/injury/a9abc8b9-84d7-4456-97be-c7be983a1748",
+											"host": [
+												"{{url_aws}}"
+											],
+											"path": [
+												"diagnostic",
+												"injury",
+												"a9abc8b9-84d7-4456-97be-c7be983a1748"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Fri, 17 Feb 2023 06:31:17 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "454"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "x-amzn-RequestId",
+											"value": "e2994d5e-8647-4f2f-ae73-7b59a0d5d6c8"
+										},
+										{
+											"key": "x-amz-apigw-id",
+											"value": "AeHQYFwdIAMFxVw="
+										},
+										{
+											"key": "X-Amzn-Trace-Id",
+											"value": "Root=1-63ef1f35-2db7785a7a65f66276514391"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 1,\n    \"medicId\": 1,\n    \"injuryId\": \"a9abc8b9-84d7-4456-97be-c7be983a1748\",\n    \"condition\": \"Psariasis 2\",\n    \"level\": \"Medio\",\n    \"requeresTreatment\": true,\n    \"treatmentTerm\": \"6 meses\",\n    \"medicines\": \" Ciclosparina 100mg cada 8 horas\",\n    \"treatmentControl\": \"Mensual\",\n    \"recommendations\": \"Evitar uso de productos derivados del petróleo, uso de bloqueador solar y baja exposición, hidratación frecuente.\",\n    \"createdAt\": \"2023-02-17T04:29:56.633Z\",\n    \"updatedAt\": \"2023-02-17T04:29:56.633Z\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Register update",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"injuryId\": \"a9abc8b9-84d7-4456-97be-c7be983a1745\",\n    \"condition\": \"Psariasis 5\",\n    \"level\": \"Medio\",\n    \"requeresTreatment\": true,\n    \"treatmentTerm\": \"6 meses\",\n    \"medicines\": \" Ciclosparina 100mg cada 8 horas\",\n    \"treatmentControl\": \"Mensual\",\n    \"recommendations\": \"Evitar uso de productos derivados del petróleo, uso de bloqueador solar y baja exposición, hidratación frecuente. Control en un mes\",\n    \"medicId\": \"1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url_aws}}/diagnostic/register",
+									"host": [
+										"{{url_aws}}"
+									],
+									"path": [
+										"diagnostic",
+										"register"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"injuryId\": \"a9abc8b9-84d7-4456-97be-c7be983a1747\",\n    \"condition\": \"Psariasis 2\",\n    \"level\": \"Medio\",\n    \"requeresTreatment\": true,\n    \"treatmentTerm\": \"6 meses\",\n    \"medicines\": \" Ciclosparina 100mg cada 8 horas\",\n    \"treatmentControl\": \"Mensual\",\n    \"recommendations\": \"Evitar uso de productos derivados del petróleo, uso de bloqueador solar y baja exposición, hidratación frecuente.\",\n    \"medicId\": \"1\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{url_local2}}/diagnostic/register",
+											"host": [
+												"{{url_local2}}"
+											],
+											"path": [
+												"diagnostic",
+												"register"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "454"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"1c6-9fSTPYgA5y7TcpS7z/+A9u+xW1c\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 15 Feb 2023 05:26:05 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 1,\n    \"medicId\": 1,\n    \"injuryId\": \"a9abc8b9-84d7-4456-97be-c7be983a1747\",\n    \"condition\": \"Psariasis 2\",\n    \"level\": \"Medio\",\n    \"requeresTreatment\": true,\n    \"treatmentTerm\": \"6 meses\",\n    \"medicines\": \" Ciclosparina 100mg cada 8 horas\",\n    \"treatmentControl\": \"Mensual\",\n    \"recommendations\": \"Evitar uso de productos derivados del petróleo, uso de bloqueador solar y baja exposición, hidratación frecuente.\",\n    \"createdAt\": \"2023-02-15T10:23:46.986Z\",\n    \"updatedAt\": \"2023-02-15T10:26:05.645Z\"\n}"
+								},
+								{
+									"name": "404",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"injuryId\": \"a9abc8b9-84d7-4456-97be-c7be983a1748\",\n    \"condition\": \"Psariasis 3\",\n    \"level\": \"Medio\",\n    \"requeresTreatment\": true,\n    \"treatmentTerm\": \"6 meses\",\n    \"medicines\": \" Ciclosparina 100mg cada 8 horas\",\n    \"treatmentControl\": \"Mensual\",\n    \"recommendations\": \"Evitar uso de productos derivados del petróleo, uso de bloqueador solar y baja exposición, hidratación frecuente.\",\n    \"medicId\": \"1\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{url_local2}}/diagnostic/register",
+											"host": [
+												"{{url_local2}}"
+											],
+											"path": [
+												"diagnostic",
+												"register"
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "51"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"33-27PW380u853Zx5cVPCFTR+chcAo\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 15 Feb 2023 05:44:02 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"statusCode\": 404,\n    \"message\": \"Diagnostic Not Found\"\n}"
+								}
+							]
 						}
 					]
 				}
@@ -509,14 +1100,40 @@
 	],
 	"variable": [
 		{
-			"key": "url_aws",
-			"value": "https://fvuknp64n6.execute-api.us-east-1.amazonaws.com/dev",
-			"type": "string"
-		},
-		{
 			"key": "url_local",
 			"value": "http://localhost:3000",
-			"type": "string"
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "url_local2",
+			"value": "http://localhost:3001",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "url_aws",
+			"value": "https://fvuknp64n6.execute-api.us-east-1.amazonaws.com/dev",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "url_nlb1",
+			"value": "http://lbn-dermo-app-web-84168d11e474aa03.elb.us-east-1.amazonaws.com:3000",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "url_nlb2",
+			"value": "http://lbn-dermo-app-web-84168d11e474aa03.elb.us-east-1.amazonaws.com:3001",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "bearer_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJlbG9uQGdtYWlsLmNvbSIsImlhdCI6MTY3NzQwNzAxMCwiZXhwIjoxNjc3NDA3MTAwfQ.KQRLax-i3TNclEiC-qPG--gvYfH9N2E-jhFkV1Z9NdM",
+			"type": "string",
+			"disabled": true
 		}
 	]
 }
