@@ -96,7 +96,6 @@ jobs:
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       with:
-        projectBaseDir: my-custom-directory
         args: >
           -Dsonar.verbose=true
           -Dsonar.branch.name=${GITHUB_REF##*/}
