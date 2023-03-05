@@ -2,9 +2,9 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
-import { AuthHelper } from './auth.helper';
-import { AuthService } from './auth.service';
-import { Login } from './login.entity';
+import { AuthHelper } from './services/auth.helper';
+import { AuthService } from './services/auth.service';
+import { LoginEntity } from './entities/login.entity';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -17,7 +17,7 @@ describe('AuthController', () => {
         AuthHelper,
         JwtService,
         {
-          provide: getRepositoryToken(Login),
+          provide: getRepositoryToken(LoginEntity),
           useValue: {},
         },
       ],

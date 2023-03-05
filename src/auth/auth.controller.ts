@@ -1,19 +1,20 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
+  Get,
   Inject,
   Logger,
   Post,
   Req,
+  Res,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { LoginDto, RegisterDto } from './auth.dto';
+import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './auth.guard';
-import { AuthService } from './auth.service';
-import { Login } from './login.entity';
+import { AuthHelper } from './services/auth.helper';
+import { AuthService } from './services/auth.service';
+import { LoginEntity } from './entities/login.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -22,9 +23,16 @@ export class AuthController {
   @Inject(AuthService)
   private readonly service: AuthService;
 
+  @Inject(AuthHelper)
+  private readonly authHelper: AuthHelper;
+
+  @Get('health')
+  redirect(@Res() res) {
+    return res.redirect('/health');
+  }
+
   @Post('register')
-  @UseInterceptors(ClassSerializerInterceptor)
-  private register(@Body() body: RegisterDto): Promise<Login | never> {
+  private register(@Body() body: RegisterDto): Promise<LoginEntity | never> {
     return this.service.register(body);
   }
 
@@ -33,9 +41,16 @@ export class AuthController {
     return this.service.login(body);
   }
 
-  @Post('refresh')
+  @Post('token/refresh')
   @UseGuards(JwtAuthGuard)
   private refresh(@Req() { user }: Request): Promise<any | never> {
-    return this.service.refresh(<Login>user);
+    this.logger.log('refresh user ', user);
+    return this.service.refresh(<LoginEntity>user);
+  }
+
+  @Post('token/validate')
+  @UseGuards(JwtAuthGuard)
+  validToken(@Req() req) {
+    return req.user;
   }
 }
