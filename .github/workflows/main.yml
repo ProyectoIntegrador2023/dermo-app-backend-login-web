@@ -93,15 +93,8 @@ jobs:
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting
         fetch-depth: 0
-    - name: Get branch 1
-      run: echo "BRANCH_NAME=$(echo ${GITHUB_REF##*/})" >> $BRANCH_NAME
-
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
-      with:
-        args: >
-            -Dsonar.verbose=true
-            -Dsonar.branch.name=(echo ${{ env.BRANCH_NAME }})
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
