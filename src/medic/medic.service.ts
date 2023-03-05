@@ -15,26 +15,35 @@ export class MedicService {
   @InjectRepository(LoginEntity)
   private readonly loginRepository: Repository<LoginEntity>;
 
+  async getPersonalProfile(email: string): Promise<MedicEntity> {
+    this.logger.log('getPersonalProfile email', email);
+    const loginTmp: LoginEntity = await this.getLoginByEmail(email);
+    if (!loginTmp) {
+      throw new HttpException('Medic Not Found', HttpStatus.NOT_FOUND);
+    }
+    const personalProfileTmp: MedicEntity = await this.getMedicById(
+      loginTmp.id
+    );
+
+    if (!personalProfileTmp) {
+      throw new HttpException('Medic profile Not Found', HttpStatus.NOT_FOUND);
+    }
+
+    return personalProfileTmp;
+  }
+
   async registerPersonalProfile(body: MedicDto): Promise<MedicEntity> {
     this.logger.log('registerPersonalProfile body', JSON.stringify(body));
 
-    const loginTmp: LoginEntity = await this.loginRepository.findOne({
-      where: { email: body.email },
-    });
+    const loginTmp: LoginEntity = await this.getLoginByEmail(body.email);
 
     if (!loginTmp) {
       throw new HttpException('Medic Not Found', HttpStatus.NOT_FOUND);
     }
     this.logger.log('Getting login from DB ', JSON.stringify(loginTmp));
 
-    const medicTmp: MedicEntity = await this.medicRepository.findOne({
-      where: {
-        login: {
-          id: loginTmp.id,
-        },
-      },
-    });
-    this.logger.log('Getting data from DB ', JSON.stringify(medicTmp));
+    const medicTmp: MedicEntity = await this.getMedicById(loginTmp.id);
+    this.logger.log('Getting medic data from DB ', JSON.stringify(medicTmp));
 
     if (medicTmp) {
       throw new HttpException(
@@ -56,22 +65,14 @@ export class MedicService {
   async updatePersonalProfile(body: MedicDto): Promise<MedicEntity | never> {
     this.logger.log('updatePersonalProfile body', JSON.stringify(body));
 
-    const loginTmp: LoginEntity = await this.loginRepository.findOne({
-      where: { email: body.email },
-    });
+    const loginTmp: LoginEntity = await this.getLoginByEmail(body.email);
 
     if (!loginTmp) {
       throw new HttpException('Medic Not Found', HttpStatus.NOT_FOUND);
     }
     this.logger.log('Getting login from DB ', JSON.stringify(loginTmp));
 
-    const medicTmp: MedicEntity = await this.medicRepository.findOne({
-      where: {
-        login: {
-          id: loginTmp.id,
-        },
-      },
-    });
+    const medicTmp: MedicEntity = await this.getMedicById(loginTmp.id);
 
     if (!medicTmp) {
       throw new HttpException('Medic profile Not Found', HttpStatus.NOT_FOUND);
@@ -84,5 +85,21 @@ export class MedicService {
     medicTmp.city = body.city;
 
     return this.medicRepository.save(medicTmp);
+  }
+
+  public async getLoginByEmail(email: string): Promise<LoginEntity> {
+    return await this.loginRepository.findOne({
+      where: { email },
+    });
+  }
+
+  public async getMedicById(id: number): Promise<MedicEntity> {
+    return await this.medicRepository.findOne({
+      where: {
+        login: {
+          id,
+        },
+      },
+    });
   }
 }
