@@ -99,9 +99,9 @@ jobs:
       run: echo ${GITHUB_REF##*}
     - name: Get branch 3
       run: |
-        str=${GITHUB_REF##*}
-        oldstr="refs/heads/"
-        newstr=""
+        $str=${GITHUB_REF##*}
+        $oldstr="refs/heads/"
+        $newstr=""
         BRANCH_NAME=$(echo $str | sed "s/$oldstr/$newstr/")
         echo $result
         echo ${GITHUB_REF##*/} | sed "s/$oldstr/$newstr/"
