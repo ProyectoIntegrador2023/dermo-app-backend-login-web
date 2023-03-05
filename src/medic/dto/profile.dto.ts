@@ -11,9 +11,8 @@ export class ProfileDto {
   @IsString()
   licenceValidityDate: Date;
 
-  @IsBase64()
-  @MinLength(2)
-  licenceImage: Buffer;
+  @IsString()
+  licenceImage: string;
 
   @IsEmail()
   public readonly email?: string;
