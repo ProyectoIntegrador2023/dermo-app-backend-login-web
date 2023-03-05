@@ -9,6 +9,7 @@ env:
   ECS_CLUSTER: DermoAppWebCluster
   ECS_SERVICE: s-dermo-app-web-service-3000
   AWS_REGION: us-east-1
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 jobs:
   install-dependencies:
@@ -101,16 +102,8 @@ jobs:
         with:
           path: node_modules
           key: npm-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}-dev
-      - name: pwd
-        run: pwd
-      - name: dir
-        run: ls -la
       - name: BRANCH_NAME
-        run: echo ${{ env.BRANCH_NAME}}
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
+        run: echo ${{ env.BRANCH_NAME }}
       - uses: actions/checkout@v2
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
@@ -120,7 +113,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
   Deploy:
     if: github.ref == 'refs/heads/develop'
