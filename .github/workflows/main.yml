@@ -96,26 +96,22 @@ jobs:
     - name: Get branch 1
       run: echo ${GITHUB_REF##*/}
     - name: Get branch 2
-      run: echo ${GITHUB_REF##}
-
-    - name: Current Branch
-      shell: bash
-      id: long-lived-branch
+      run: echo ${GITHUB_REF##*}
+    - name: Get branch 3
       run: |
-        CURRENT_BRANCH=$(echo ${GITHUB_REF#refs/heads/})
-        if [ "$CURRENT_BRANCH" != "master" ] && [ "$CURRENT_BRANCH" != "develop" ] ]
-        then
-          CURRENT_BRANCH="feature"
-        fi
-        echo "##[set-output name=branch;]$(echo ${CURRENT_BRANCH})"
-        echo "Sonar Branch report => " ${CURRENT_BRANCH}
+        str=${GITHUB_REF##*}
+        oldstr="refs/heads/"
+        newstr=""
+        BRANCH_NAME=$(echo $str | sed "s/$oldstr/$newstr/")
+        echo $result
+        echo ${GITHUB_REF##*/} | sed "s/$oldstr/$newstr/"
 
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       with:
         args: >
             -Dsonar.verbose=true
-            -Dsonar.branch.name=${{ steps.long-lived-branch.outputs.branch }}
+            -Dsonar.branch.name=$(${GITHUB_REF##*/} | sed "s/$oldstr/$newstr/")
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
