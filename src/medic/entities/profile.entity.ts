@@ -25,8 +25,8 @@ export class ProfileEntity extends BaseEntity {
   @Column({ name: 'fecha_vigencia_licencia', type: 'varchar' })
   public licenceValidityDate!: Date;
 
-  @Column({ name: 'licenciaImg', type: 'bytea' })
-  public licenceImage!: Buffer;
+  @Column({ name: 'licenciaImg', type: 'varchar', nullable: true })
+  public licenceImage!: string;
 
   @CreateDateColumn({
     name: 'fecha_creacion',
