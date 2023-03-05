@@ -1,4 +1,13 @@
-import { Body, Controller, Inject, Logger, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Logger,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { MedicDto } from './dto/medic.dto';
 import { ProfileDto } from './dto/profile.dto';
 import { MedicEntity } from './entities/medic.entity';
@@ -16,6 +25,13 @@ export class ProfileController {
   @Inject(ProfileService)
   private readonly profileService: ProfileService;
 
+  @Get('personal/:email')
+  private getPersonalProfile(
+    @Param('email') email: string
+  ): Promise<MedicEntity | never> {
+    return this.medicService.getPersonalProfile(email);
+  }
+
   @Post('personal')
   private registerPersonalProfile(
     @Body() body: MedicDto
@@ -26,6 +42,13 @@ export class ProfileController {
   @Put('personal')
   private updatePersonalProfile(@Body() body: MedicDto): Promise<MedicEntity> {
     return this.medicService.updatePersonalProfile(body);
+  }
+
+  @Get('medic/:email')
+  private getMedicProfile(
+    @Param('email') email: string
+  ): Promise<ProfileEntity | never> {
+    return this.profileService.getMedicProfile(email);
   }
 
   @Post('medic')
