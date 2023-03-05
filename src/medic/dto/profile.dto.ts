@@ -1,4 +1,4 @@
-import { IsBase64, IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString, MinLength } from 'class-validator';
 export class ProfileDto {
   @IsString()
   @MinLength(2)
