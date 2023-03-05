@@ -89,6 +89,10 @@ jobs:
     needs: test
     runs-on: ubuntu-20.04
     steps:
+    - name: pwd
+      run: pwd
+    - name: dir
+      run: ls -la
     - uses: actions/checkout@v2
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting
