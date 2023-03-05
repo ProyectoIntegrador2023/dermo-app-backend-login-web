@@ -93,12 +93,23 @@ jobs:
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting
         fetch-depth: 0
+    - name: Get branch 1
+      run: echo ${GITHUB_REF##*/}
+    - name: Get branch 2
+      run: echo ${{ github.event.pull_request.base.ref }}
+
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       with:
         args: >
-          -Dsonar.verbose=true
-          -Dsonar.branch.name=${GITHUB_REF##*/}
+            -Dsonar.verbose=true
+            if [ ${{ github.ref }} = "refs/heads/master" ]; then
+              -Dsonar.branch.name=master
+            elif [ ${{ github.ref }} = "refs/heads/develop" ]; then
+              -Dsonar.branch.name=develop
+            elif [ ${{ github.ref }} = "refs/heads/*" ]; then
+              -Dsonar.branch.name=feature
+            fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
