@@ -5,21 +5,18 @@ import { HttpException } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
 import { LoginEntity, LoginRepositoryFake } from '../entities/login.entity';
 import { AuthService } from './auth.service';
-import { RegisterDto } from '../dto/auth.dto';
 import { AuthHelper } from './auth.helper';
 import { JwtService } from '@nestjs/jwt';
 
 const registerDtoMock = {
   email: faker.internet.email(),
   password: faker.internet.password(),
-}
+};
 
 const loginMock = {
   email: faker.internet.email(),
   password: faker.internet.password(),
 };
-
-const createdLoginEntity = LoginEntity.of(loginMock);
 
 const savedLoginEntity = LoginEntity.of({
   id: Number(faker.random.numeric(2)),

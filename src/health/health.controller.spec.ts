@@ -9,7 +9,6 @@ import { HealthController } from './health.controller';
 
 describe('HealthController', () => {
   let controller: HealthController;
-  let healthCheckService: HealthCheckService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,7 +37,6 @@ describe('HealthController', () => {
     }).compile();
 
     controller = module.get<HealthController>(HealthController);
-    healthCheckService = module.get<HealthCheckService>(HealthCheckService);
   });
 
   it('should be defined', () => {

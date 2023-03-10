@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { LoginEntity } from '../../auth/entities/login.entity';
 import {
   BaseEntity,

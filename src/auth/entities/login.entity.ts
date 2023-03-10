@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Exclude } from 'class-transformer';
 import {
   BaseEntity,

@@ -15,8 +15,6 @@ const loginMock = {
   password: faker.internet.password(),
 };
 
-const createdLoginEntity = LoginEntity.of(loginMock);
-
 const savedLoginEntity = LoginEntity.of({
   id: Number(faker.random.numeric(2)),
   createdAt: new Date(),
@@ -38,8 +36,6 @@ const medicDTOMock = {
   ...medicMock,
   email: faker.internet.email(),
 };
-
-const createdMedicEntity = MedicEntity.of(medicMock);
 
 const savedMedicEntity = MedicEntity.of({
   id: Number(faker.random.numeric(2)),
