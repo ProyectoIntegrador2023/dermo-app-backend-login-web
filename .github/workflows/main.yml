@@ -115,7 +115,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   Deploy:
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
     name: "Deployment"
     runs-on: "ubuntu-20.04"
     permissions:

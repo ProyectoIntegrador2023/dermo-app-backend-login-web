@@ -44,4 +44,19 @@ export class ProfileEntity extends BaseEntity {
   @OneToOne(() => MedicEntity)
   @JoinColumn({ name: 'medic_id' })
   public medic: MedicEntity;
+
+  public static of(params: Partial<ProfileEntity>): ProfileEntity {
+    const profileEntity = new ProfileEntity();
+
+    Object.assign(profileEntity, params);
+
+    return profileEntity;
+  }
+}
+
+export class ProfileRepositoryFake {
+  public create(): void {}
+  public async save(): Promise<void> {}
+  public async remove(): Promise<void> {}
+  public async findOne(): Promise<void> {}
 }

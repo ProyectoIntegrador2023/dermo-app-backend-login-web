@@ -1,6 +1,6 @@
 {
   "name": "dermo-app-backend-auth-web",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "",
   "author": "",
   "private": true,
@@ -15,8 +15,9 @@
     "start": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" ",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest --no-watch",
-    "test:watch": "jest --watch",
+    "test": "jest",
+    "test:nowatch": "jest --no-watch",
+    "test:watch": "jest --watch --coverage",
     "test:coverage": "jest --no-watch --coverage",
     "test:coverage:report": "npx nyc jest ",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -46,6 +47,7 @@
     "typeorm": "^0.3.11"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
@@ -61,8 +63,10 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "29.3.1",
+    "node-mocks-http": "^1.12.1",
     "prettier": "^2.3.2",
     "rimraf": "^4.1.2",
+    "sonarqube-scanner": "^3.0.1",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.3",
     "ts-jest": "29.0.3",
@@ -88,9 +92,16 @@
       "!**/node_modules/**",
       "!**/coverage/**",
       "!**/serviceWorker.js",
-      "!**/index.js"
+      "!**/index.js",
+      "!**/main.ts",
+      "!**/**/*.module.ts",
+      "!**/typeorm.service.ts",
+      "!**/config/**"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "modulePaths": [
+      "<rootDir>"
+    ]
   }
 }

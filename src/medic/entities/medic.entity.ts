@@ -44,4 +44,19 @@ export class MedicEntity extends BaseEntity {
   @OneToOne(() => LoginEntity)
   @JoinColumn({ name: 'login_id' })
   public login: LoginEntity;
+
+  public static of(params: Partial<MedicEntity>): MedicEntity {
+    const medicEntity = new MedicEntity();
+
+    Object.assign(medicEntity, params);
+
+    return medicEntity;
+  }
+}
+
+export class MedicRepositoryFake {
+  public create(): void {}
+  public async save(): Promise<void> {}
+  public async remove(): Promise<void> {}
+  public async findOne(): Promise<void> {}
 }
