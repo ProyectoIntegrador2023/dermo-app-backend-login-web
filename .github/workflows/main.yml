@@ -79,12 +79,7 @@ jobs:
         run: npm run lint
       - name: Running Test
         run: |
-          npm run test:coverage
-      - name: Persist Data
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage
-          path: ./coverage
+          npm run test:nowatch
 
   sonarcloud:
     needs: test
@@ -104,16 +99,14 @@ jobs:
         with:
           path: node_modules
           key: npm-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}-dev
-      - name: Restore cache for coverage
-        uses: actions/cache@v3
-        env:
-          cache-name: coverage
-        with:
-          path: ./coverage
-          key: coverage
       - name: Running Test
         run: |
           npm run test:coverage
+      - name: Persist Data
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: ./coverage
       - uses: actions/checkout@v2
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
