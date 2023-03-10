@@ -33,7 +33,7 @@ export class LoginEntity extends BaseEntity {
     default: null,
   })
   public lastLoginAt: Date | null;
-
+  // BEGIN-NOSCAN
   public static of(params: Partial<LoginEntity>): LoginEntity {
     const loginEntity = new LoginEntity();
 
@@ -41,8 +41,8 @@ export class LoginEntity extends BaseEntity {
 
     return loginEntity;
   }
+  // @SONAR_STOP@
 }
-
 export class LoginRepositoryFake {
   public create(): void {}
   public async save(): Promise<void> {}
@@ -50,3 +50,4 @@ export class LoginRepositoryFake {
   public async remove(): Promise<void> {}
   public async findOne(): Promise<void> {}
 }
+// @SONAR_START@

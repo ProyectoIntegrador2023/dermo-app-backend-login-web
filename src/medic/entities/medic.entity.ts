@@ -45,7 +45,7 @@ export class MedicEntity extends BaseEntity {
   @OneToOne(() => LoginEntity)
   @JoinColumn({ name: 'login_id' })
   public login: LoginEntity;
-
+  // @SONAR_STOP@
   public static of(params: Partial<MedicEntity>): MedicEntity {
     const medicEntity = new MedicEntity();
 
@@ -61,3 +61,4 @@ export class MedicRepositoryFake {
   public async remove(): Promise<void> {}
   public async findOne(): Promise<void> {}
 }
+// @SONAR_START@

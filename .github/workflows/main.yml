@@ -102,6 +102,13 @@ jobs:
         with:
           path: node_modules
           key: npm-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}-dev
+      - name: Restore or save cache for coverage
+        uses: actions/cache@v3
+        env:
+          cache-name: coverage
+        with:
+          path: coverage
+          key: coverage
       - name: BRANCH_NAME
         run: echo ${{ env.BRANCH_NAME }}
       - uses: actions/checkout@v2
