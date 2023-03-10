@@ -95,6 +95,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 14.x
+      - name: BRANCH_NAME
+        run: echo ${{ env.BRANCH_NAME }}
       - name: Restore cache for dev Dependencies
         uses: actions/cache@v3
         env:
@@ -109,8 +111,9 @@ jobs:
         with:
           path: ./coverage
           key: coverage
-      - name: BRANCH_NAME
-        run: echo ${{ env.BRANCH_NAME }}
+      - name: Running Test
+        run: |
+          npm run test:coverage
       - uses: actions/checkout@v2
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
