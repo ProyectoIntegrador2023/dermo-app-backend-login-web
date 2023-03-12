@@ -6,11 +6,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoginEntity } from 'src/auth/entities/login.entity';
+import { LoginEntity } from '../../auth/entities/login.entity';
 import { Repository } from 'typeorm';
-import { ProfileDto } from './dto/profile.dto';
-import { MedicEntity } from './entities/medic.entity';
-import { ProfileEntity } from './entities/profile.entity';
+import { ProfileDto } from '../dto/profile.dto';
+import { MedicEntity } from '../entities/medic.entity';
+import { ProfileEntity } from '../entities/profile.entity';
 import { MedicService } from './medic.service';
 
 @Injectable()
@@ -22,12 +22,6 @@ export class ProfileService {
 
   @InjectRepository(ProfileEntity)
   private readonly profileRepository: Repository<ProfileEntity>;
-
-  @InjectRepository(MedicEntity)
-  private readonly medicRepository: Repository<MedicEntity>;
-
-  @InjectRepository(LoginEntity)
-  private readonly loginRepository: Repository<LoginEntity>;
 
   async getMedicProfile(email: string): Promise<ProfileEntity> {
     this.logger.log('getPersonalProfile email', email);

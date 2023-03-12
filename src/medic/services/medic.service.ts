@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoginEntity } from 'src/auth/entities/login.entity';
 import { Repository } from 'typeorm';
-import { MedicDto } from './dto/medic.dto';
-import { MedicEntity } from './entities/medic.entity';
+import { MedicDto } from '../dto/medic.dto';
+import { MedicEntity } from '../entities/medic.entity';
+import { LoginEntity } from '../../auth/entities/login.entity';
 
 @Injectable()
 export class MedicService {

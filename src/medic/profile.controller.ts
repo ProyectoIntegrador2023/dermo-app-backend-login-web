@@ -12,8 +12,8 @@ import { MedicDto } from './dto/medic.dto';
 import { ProfileDto } from './dto/profile.dto';
 import { MedicEntity } from './entities/medic.entity';
 import { ProfileEntity } from './entities/profile.entity';
-import { MedicService } from './medic.service';
-import { ProfileService } from './profile.service';
+import { MedicService } from './services/medic.service';
+import { ProfileService } from './services/profile.service';
 
 @Controller('profile')
 export class ProfileController {

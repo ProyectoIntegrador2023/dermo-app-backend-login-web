@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { LoginEntity } from '../../auth/entities/login.entity';
 import {
   BaseEntity,
@@ -44,4 +45,20 @@ export class MedicEntity extends BaseEntity {
   @OneToOne(() => LoginEntity)
   @JoinColumn({ name: 'login_id' })
   public login: LoginEntity;
+  // @SONAR_STOP@
+  public static of(params: Partial<MedicEntity>): MedicEntity {
+    const medicEntity = new MedicEntity();
+
+    Object.assign(medicEntity, params);
+
+    return medicEntity;
+  }
 }
+
+export class MedicRepositoryFake {
+  public create(): void {}
+  public async save(): Promise<void> {}
+  public async remove(): Promise<void> {}
+  public async findOne(): Promise<void> {}
+}
+// @SONAR_START@

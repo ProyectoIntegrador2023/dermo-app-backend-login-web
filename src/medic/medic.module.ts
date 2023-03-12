@@ -3,9 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoginEntity } from 'src/auth/entities/login.entity';
 import { MedicEntity } from './entities/medic.entity';
 import { ProfileEntity } from './entities/profile.entity';
-import { MedicService } from './medic.service';
+import { MedicService } from './services/medic.service';
 import { ProfileController } from './profile.controller';
-import { ProfileService } from './profile.service';
+import { ProfileService } from './services/profile.service';
 
 @Module({
   controllers: [ProfileController],
